@@ -4,6 +4,6 @@ public interface Document {
 
 	public String generate();
 	
-	public boolean validate();
+	public boolean validate(String number);
 	
 }
