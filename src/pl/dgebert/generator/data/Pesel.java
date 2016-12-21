@@ -3,24 +3,29 @@ package pl.dgebert.generator.data;
 import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
-import com.sun.javafx.css.CalculatedValue;
-
 public class Pesel implements Document {
 
-	@SuppressWarnings("static-access")
+	DecimalFormat df= new DecimalFormat("00");
+
 	@Override
 	public String generate() {
-		String pesel = "";
 		RandomDataGen rdg = new RandomDataGen();
-		DecimalFormat df= new DecimalFormat("00");
-		
 		GregorianCalendar gc = rdg.getRandomDate();
 		
+		return generate(gc);
+	}
+	
+	@SuppressWarnings("static-access")
+	public String generate(GregorianCalendar gc){
 		int year = gc.get(gc.YEAR);
 		int month = gc.get(gc.MONTH) + 1;
 		int dayOfMonth = gc.get(gc.DAY_OF_MONTH);
-		
-		System.out.println( year + " " + month + " " + dayOfMonth);
+		return generate(year, month,dayOfMonth);
+	}
+	
+	public String generate(int year, int month, int dayOfMonth){
+		String pesel = "";
+
 		try {
 			pesel = String.valueOf(df.format(year%100));
 			pesel += getMonthForPesel(year, month);
@@ -37,7 +42,6 @@ public class Pesel implements Document {
 	}
 
 	private int calculateControlNumber(String pesel) {
-		System.out.println( "pesel to Contro number: " + pesel);
 		char[] p = pesel.toCharArray();
 		Integer sum =  Integer.valueOf(String.valueOf(p[0])) * 1
 			+  Integer.valueOf(String.valueOf(p[1])) * 3
@@ -77,8 +81,7 @@ public class Pesel implements Document {
 		}else if(year >= 1800 && year < 1900){
 			return String.valueOf(month + 80);
 		}else if(year >= 1900 && year < 2000){
-			DecimalFormat mFormat= new DecimalFormat("00");
-			return mFormat.format(Double.valueOf(month));
+			return df.format(Double.valueOf(month));
 		}else if(year >= 2000 && year < 2100){
 			return String.valueOf(month + 20);
 		}else if(year >= 2100 && year < 2200){
@@ -94,14 +97,12 @@ public class Pesel implements Document {
 		RandomDataGen rdg = new RandomDataGen();
 		DecimalFormat df = new DecimalFormat("000");
 		String result = df.format(rdg.randBetween(0, 999));
-		System.out.println("series:" + result);
 		return result;
 	}
 	//TODO Already just a one digit - add sex enum as param and workflow based on it
 	private String getSexNumberForPesel(){
 		RandomDataGen rdg = new RandomDataGen();
 		String result = String.valueOf(rdg.randBetween(0, 9));
-		System.out.println("sex: " + result);
 		return result;
 	}
 }
